@@ -1,9 +1,13 @@
 pipeline {
     agent any
     stages {
-        stage {
-            steps:
+        stage { (Checout) {
+            steps {
+                
+            }
+        }
             
+
         }
           
     }
