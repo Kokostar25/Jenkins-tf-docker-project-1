@@ -1,23 +1,17 @@
 terraform {
-  // required_providers {
-  //   aws = {
-  //     source  = "hashicorp/aws"
-  //     version = "~> 3.0"
-  //   }
-  // }
 
   required_providers {
-    docker = {
-      source = "kreuzwerker/docker"
-      version = "2.15.0"
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
     }
-  } 
+  }
 }
-
-
-
 # Configure the AWS Provider
-
+provider "aws" {
+  region = var.region
+  profile = "iamadmin-general"
+}
 
 
 module "networking" {
@@ -45,14 +39,3 @@ module "ec2_instance" {
     ec2_id                      = module.ec2_instance.jen_ec2_id
 }
 
-
-resource "docker_registry_image" "appimage" {
-  name = "aws_ecr_repository.appimage.repository_url.latest"
-
-  build {
-    context = "./"
-    dockerfile = "Dockerfile"
-
-  }
-}
-  
