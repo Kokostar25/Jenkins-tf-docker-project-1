@@ -1,5 +1,5 @@
 resource "aws_instance" "web-app" {
-  count     =   length(var.subnet_cidr)  
+  count     =   2  
   ami           = var.ami
   instance_type = "t2.micro"
   key_name = var.key_name
@@ -7,6 +7,8 @@ resource "aws_instance" "web-app" {
   vpc_security_group_ids = [aws_security_group.jenks.id]
   associate_public_ip_address = true
   availability_zone = element(var.availability_zones, count.index)
+  user_data = "${file("install-docker.sh")}"
+  iam_instance_profile = aws_iam_instance_profile.ec2_profile_web_app.name
 
   tags = {
     Name = "web-app-${element(var.availability_zones, count.index)}"
@@ -25,22 +27,7 @@ resource "aws_instance" "jenkins" {
   associate_public_ip_address = true
   availability_zone = element(var.availability_zones, count.index)
   user_data = "${file("install-jenkins.sh")}"
-  // user_data = <<-EOF
-  //         #! /bin/bash
-  //         sudo yum -y update
-  //         sudo amazon-linux-extras install epel -y
-  //         sudo yum-config-manager --enable epel
-  //         sudo wget -O /etc/yum.repos.d/jenkins.repo \
-  //             https://pkg.jenkins.io/redhat-stable/jenkins.repo
-  //         sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
-  //         sudo yum upgrade
-  //         sudo yum install jenkins java-1.8.0-openjdk-devel -y
-  //         sudo systemctl daemon-reload
-  //         sudo systemctl start jenkins
-  //         sudo systemctl status jenkins
-  //         EOF
-
-
+  
   tags = {
     Name = "jenkins-${element(var.availability_zones, count.index)}"
   
@@ -203,4 +190,64 @@ resource "aws_security_group" "jenks-sg" {
     tags = {
         Name = "jenks-sg"
     }
+}
+
+# ECR
+
+resource "aws_ecr_repository" "appimage" {
+  name                 = "appimage"
+  image_tag_mutability = "MUTABLE"
+
+  }
+
+#EC2 Profile
+
+resource "aws_iam_role" "ec2_role_web_app" {
+  name = "web_app"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+
+  tags = {
+    project = "web_app"
+  }
+}
+
+resource "aws_iam_instance_profile" "ec2_profile_web_app" {
+  name = "ec2_profile_web_app"
+  role = aws_iam_role.ec2_role_web_app.name
+}
+
+resource "aws_iam_role_policy" "ec2_policy" {
+  name = "ec2_policy"
+  role = aws_iam_role.ec2_role_web_app.id
+
+  policy = <<-EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchGetImage",
+        "ecr:GetDownloadUrlForLayer"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
 }
