@@ -8,7 +8,7 @@ resource "aws_instance" "web-app" {
   associate_public_ip_address = true
   availability_zone = element(var.availability_zones, count.index)
   user_data = "${file("install-docker.sh")}"
-  iam_instance_profile = aws_iam_instance_profile.ec2_profile_web_app.name
+  // iam_instance_profile = aws_iam_instance_profile.ec2_profile_web_app.name
 
   tags = {
     Name = "web-app-${element(var.availability_zones, count.index)}"
@@ -202,52 +202,52 @@ resource "aws_ecr_repository" "appimage" {
 
 #EC2 Profile
 
-resource "aws_iam_role" "ec2_role_web_app" {
-  name = "web_app"
+// resource "aws_iam_role" "ec2_role_web_app" {
+//   name = "web_app"
 
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      },
-      "Effect": "Allow"
-    }
-  ]
-}
-EOF
+//   assume_role_policy = <<EOF
+// {
+//   "Version": "2012-10-17",
+//   "Statement": [
+//     {
+//       "Action": "sts:AssumeRole",
+//       "Principal": {
+//         "Service": "ec2.amazonaws.com"
+//       },
+//       "Effect": "Allow"
+//     }
+//   ]
+// }
+// EOF
 
-  tags = {
-    project = "web_app"
-  }
-}
+//   tags = {
+//     project = "web_app"
+//   }
+// }
 
-resource "aws_iam_instance_profile" "ec2_profile_web_app" {
-  name = "ec2_profile_web_app"
-  role = aws_iam_role.ec2_role_web_app.name
-}
+// resource "aws_iam_instance_profile" "ec2_profile_web_app" {
+//   name = "ec2_profile_web_app"
+//   role = aws_iam_role.ec2_role_web_app.name
+// }
 
-resource "aws_iam_role_policy" "ec2_policy" {
-  name = "ec2_policy"
-  role = aws_iam_role.ec2_role_web_app.id
+// resource "aws_iam_role_policy" "ec2_policy" {
+//   name = "ec2_policy"
+//   role = aws_iam_role.ec2_role_web_app.id
 
-  policy = <<-EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "ecr:GetAuthorizationToken",
-        "ecr:BatchGetImage",
-        "ecr:GetDownloadUrlForLayer"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
-}
-EOF
-}
+//   policy = <<-EOF
+// {
+//   "Version": "2012-10-17",
+//   "Statement": [
+//     {
+//       "Action": [
+//         "ecr:GetAuthorizationToken",
+//         "ecr:BatchGetImage",
+//         "ecr:GetDownloadUrlForLayer"
+//       ],
+//       "Effect": "Allow",
+//       "Resource": "*"
+//     }
+//   ]
+// }
+// EOF
+// }
