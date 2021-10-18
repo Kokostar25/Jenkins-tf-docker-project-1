@@ -36,13 +36,10 @@ pipeline {
                 
             }
             
-        }
-        
-    }
     environment {
         registry = "726569704041.dkr.ecr.us-east-1.amazonaws.com/appimage"
     }
-    stages {
+   
         
         stage ('Checkout') {
             steps {
