@@ -1,6 +1,8 @@
 pipeline {
     agent any
-    
+    environment {
+        registry = "726569704041.dkr.ecr.us-east-1.amazonaws.com/appimage"
+        }
 
     stages {
         stage('checkout') {
@@ -27,7 +29,7 @@ pipeline {
             }
             
         }
-        stage ("Docker Build") {
+        stage ("Docker Job") {
             steps {
               sh ("pwd")
                 dir ('webcontent/Dockerfile'){
@@ -36,11 +38,7 @@ pipeline {
                 
             }
         }
-   
-        environment {
-        registry = "726569704041.dkr.ecr.us-east-1.amazonaws.com/appimage"
-        }
-        
+ 
         stage ('Checkout') {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Kokostar25/webcontent-docker']]])
