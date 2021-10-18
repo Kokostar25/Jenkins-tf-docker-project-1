@@ -35,11 +35,11 @@ pipeline {
                 }
                 
             }
-            
-    environment {
-        registry = "726569704041.dkr.ecr.us-east-1.amazonaws.com/appimage"
-    }
+        }
    
+        environment {
+        registry = "726569704041.dkr.ecr.us-east-1.amazonaws.com/appimage"
+        }
         
         stage ('Checkout') {
             steps {
@@ -77,4 +77,3 @@ pipeline {
         }
     }
 }    
-
