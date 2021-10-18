@@ -14,10 +14,15 @@ pipeline {
             }
             
         }
-        stage ("Terraform Action") {
+        stage ("Terraform plan") {
             steps {
-                echo "terraform acton from the parameter is --> ${action}"
-                sh ("terraform ${action} --auto-approve");
+                sh ("terraform plan");
+            }
+            
+        }
+        stage ("Terraform approve") {
+            steps {
+              sh ("terraform apply --auto-approve");
             }
             
         }
