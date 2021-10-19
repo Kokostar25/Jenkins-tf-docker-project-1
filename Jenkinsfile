@@ -25,20 +25,10 @@ pipeline {
         }
         stage ("Terraform apply") {
             steps {
-              sh ("terraform destroy --auto-approve");
-            }
-            
-        }
-        stage ("Docker Job") {
-            steps {
-              sh ("pwd")
-                dir ('webcontent/Dockerfile'){
-                 sh "pwd";  
-                }
-                
+              sh ("terraform apply --auto-approve");
             }
         }
-    }  
+     }  
 }
         
       
