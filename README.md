@@ -6,5 +6,5 @@ You need to install Terraform in this same server because Jenkins needs that to 
 Make sure you have git installed as well as its plugin, same for terraform -
 specify the path on the jenkins console /usr/bin (make sure the terraform install is moved to this path)
 Make sure you have created a role- The role shouls have polices - AmazonEC2FullAccess and AmazonEC2ContainerRegistryFullAccess
-
+You might have permission issues with docker, you need to change user permissions using - sudo chmod 666 /var/run/docker.sock
 
